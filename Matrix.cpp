@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Matrix.h"
+#include <cmath>
 
 // constructor
 Matrix::Matrix(int rows, int cols)
@@ -23,7 +24,7 @@ Matrix::Matrix(int rows, int cols)
 Matrix::Matrix(const Matrix &other)
 {
     if(dimensionCheck(other)) {
-        for(int i = 0; i < rows, i++) {
+        for(int i = 0; i < rows; i++) {
             for(int j = 0; j < cols; j++) {
                 matrix[i][j] = other.matrix[i][j];
             }
@@ -53,6 +54,7 @@ int Matrix::getCols() const
     return this->cols;
 }
 
+// checks to make sure the matrices have the same dimension
 bool Matrix::dimensionCheck(const Matrix &other) const
 {
     if(rows != other.getRows() || cols != other.getCols())
@@ -68,7 +70,7 @@ bool Matrix::dimensionCheck(const Matrix &other) const
 void Matrix::operator =(const Matrix &rhs)
 {
     if(dimensionCheck(rhs)) {
-        for(int i = 0; i < rows, i++) {
+        for(int i = 0; i < rows; i++) {
             for(int j = 0; j < cols; j++) {
                 matrix[i][j] = rhs.matrix[i][j];
             }
@@ -93,7 +95,7 @@ Matrix Matrix::operator +(const Matrix &rhs)
 {
     if(dimensionCheck(rhs)) {
         Matrix result(rows, cols);
-        for(int i = 0; i < rows, i++) {
+        for(int i = 0; i < rows; i++) {
             for(int j = 0; j < cols; j++) {
                 result.matrix[i][j] = matrix[i][j] + rhs.matrix[i][j];
             }
@@ -106,7 +108,7 @@ Matrix Matrix::operator -(const Matrix &rhs)
 {
     if(dimensionCheck(rhs)) {
         Matrix result(rows, cols);
-        for(int i = 0; i < rows, i++) {
+        for(int i = 0; i < rows; i++) {
             for(int j = 0; j < cols; j++) {
                 result.matrix[i][j] = matrix[i][j] - rhs.matrix[i][j];
             }
@@ -120,7 +122,7 @@ Matrix Matrix::operator -(const Matrix &lhs)
 {
     if(dimensionCheck(lhs)) {
         Matrix result(rows, cols);
-        for(int i = 0; i < rows, i++) {
+        for(int i = 0; i < rows; i++) {
             for(int j = 0; j < cols; j++) {
                 result.matrix[i][j] = lhs.matrix[i][j] - matrix[i][j];
             }
@@ -150,7 +152,35 @@ Matrix Matrix::operator *(const Matrix &rhs)
 }
 
 // Determinant 
-double Matrix::operator %(const Matrix &rhs)
+double Matrix::determinant(const Matrix &rhs)
 {
-
+    double det = 0;
+    // not a valid matrix (i.e. not a square matrix)
+    if(rhs.getCols() != rhs.getRows())
+    {
+        return NULL;
+    }
+    // 2 by 2 matrix needed for cofactor expansion and base case
+    else if(rhs.getCols() == rhs.getRows() && rhs.getCols() == 2)
+    {
+        for(int i = 0; i < 2; i++)
+        {
+            for(int j = 0; j < 2; j++)
+            {
+                det += rhs[i, j];
+            }
+        }
+        return det;
+    }
+    // recursive cofactor expansion algorithm
+    det = 0;
+    for(int j = 0; j < rhs.getCols(); j++)
+    {
+        for(int i = 0; i < rhs.getRows(); i++)
+        {
+            // cofactor expansion formula
+            det += pow(-1, rhs.getCols() + rhs.getRows()) * rhs[i, j] * determinant(); // recurssive
+            // determinanty call is an issue.
+        }
+    }
 }

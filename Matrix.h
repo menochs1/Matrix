@@ -47,7 +47,7 @@ public:
     Matrix operator *(const Matrix &rhs);
 
     // Determinant 
-    double operator %(const Matrix &rhs);
+    double determinant(const Matrix &rhs);
 };
 
 #endif

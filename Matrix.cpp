@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Matrix.h"
 #include <cmath>
+#include <iomanip>
 
 // constructor
 Matrix::Matrix(int rows, int cols)
@@ -151,6 +152,56 @@ Matrix Matrix::operator *(const Matrix &rhs)
     return result;
 }
 
+void Matrix::operator<<(const Matrix &rhs)
+{
+    // loops through the entire matrix
+    for(int i = 0; i < rhs.getRows(); i++)
+    {
+        // puts a | for starting a row
+        std::cout << "| ";
+        for(int j = 0; j < rhs.getCols(); j++)
+        {
+            // prints the content of all values in a row
+            std::cout << std::setw(3) << rhs.matrix[i][j] << ", ";
+        }
+        std::cout << "|" << std::endl; // ends with a | on each row
+    }
+}
+
+// creates a submatrix by removing the given row and column
+Matrix Matrix::submatrix(const Matrix &other, int row, int column)
+{
+    // new dimensions for submatrix
+    int newRows = other.getRows() - 1;
+    int newCols = other.getCols() - 1;
+    Matrix result(newRows, newCols);
+
+    // offsets for mapping the old matrix to the new matrix depending on what row and column
+    // we ignore
+    int rowOffset = 0;
+    // iterates through rows and columns
+    for(int i = 0; i < other.getRows(); i++)
+    {   
+        // resets col offset for each new row
+        int colOffset = 0;
+        for(int j = 0; j < other.getCols(); j++)
+        {
+            // if the colum is the colum we are ignoring, then we shift it to the 
+            // proper place in the new matrix
+            if(j == column)
+            {
+                colOffset++;
+            } else if(i == row) { // if it is the whole row, ignore everything
+                rowOffset++;
+                break;
+            } else { // actually mapping the other matrix to the result
+                result.matrix[i - rowOffset][j - colOffset] = other.matrix[i][j];
+            }
+        }
+    }
+    return result;
+}
+
 // Determinant 
 double Matrix::determinant(const Matrix &rhs)
 {
@@ -179,7 +230,7 @@ double Matrix::determinant(const Matrix &rhs)
         for(int i = 0; i < rhs.getRows(); i++)
         {
             // cofactor expansion formula
-            det += pow(-1, rhs.getCols() + rhs.getRows()) * rhs[i, j] * determinant(); // recurssive
+            det += pow(-1, rhs.getCols() + rhs.getRows()) * rhs[i, j] * determinant(submatrix(rhs, i, j)); // recurssive
             // determinanty call is an issue.
         }
     }

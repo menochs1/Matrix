@@ -46,6 +46,12 @@ public:
     // multiplication
     Matrix operator *(const Matrix &rhs);
 
+    // creates a submatrix by removing te given rown and given column
+    Matrix submatrix(const Matrix &other, int row, int column);
+
+    // overloaded insertion operator to output a matrix
+    void operator <<(const Matrix &rhs);
+
     // Determinant 
     double determinant(const Matrix &rhs);
 };
